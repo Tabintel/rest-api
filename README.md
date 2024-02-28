@@ -33,4 +33,8 @@ The solution implements concurrency by concurrently fetching exchange rates from
 
 Logging is implemented in the solution to provide informative messages about the exchange rate fetching process. Log messages include details such as the start of fetching, success or failure of fetching, and the name of the API service being used.
 
+### API Testing
+
+- Thunderbolt Extension
+
 ### Task 2
