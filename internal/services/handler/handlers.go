@@ -6,7 +6,7 @@ import (
     "net/http"
 
     "github.com/gin-gonic/gin"
-    "your_project/internal/services/rate"
+    "github.com/tabintel/rest-api/internal/services/rate"
 )
 
 // APIHandler represents the API handler for currency exchange rate endpoints.

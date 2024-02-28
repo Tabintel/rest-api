@@ -7,8 +7,8 @@ import (
 	"github.com/joho/godotenv"
 	"log"
 	"os"
-	"your_project/internal/handler"
-	"your_project/internal/services/rate"
+	"github.com/tabintel/rest-api/internal/services/handler"
+	"github.com/tabintel/rest-api/internal/services/rate"
 )
 
 func main() {

@@ -18,8 +18,8 @@ type ExchangeRateService struct {
 func NewExchangeRateService() *ExchangeRateService {
     // Load API keys from environment variables
     apiKeys := make(map[string]string)
-    apiKeys["exchangeratesapi.io"] = os.Getenv("EXCHANGERATESAPI_IO_KEY")
-    apiKeys["openexchangerates.org"] = os.Getenv("OPENEXCHANGERATES_ORG_KEY")
+    apiKeys["https://exchangeratesapi.io/"] = os.Getenv("EXCHANGERATESAPI_IO_KEY")
+    apiKeys["https://openexchangerates.org/"] = os.Getenv("OPENEXCHANGERATES_ORG_KEY")
 
     return &ExchangeRateService{
         APIKeys: apiKeys,
@@ -33,8 +33,8 @@ func (s *ExchangeRateService) GetExchangeRate(currencyPair string) (float64, err
     errorChannel := make(chan error, 2)
 
     // Concurrently fetch exchange rates from two external services
-    go s.fetchExchangeRate("exchangeratesapi.io", currencyPair, resultChannel, errorChannel)
-    go s.fetchExchangeRate("openexchangerates.org", currencyPair, resultChannel, errorChannel)
+    go s.fetchExchangeRate("https://exchangeratesapi.io/", currencyPair, resultChannel, errorChannel)
+    go s.fetchExchangeRate("https://openexchangerates.org/", currencyPair, resultChannel, errorChannel)
 
     // Return the first exchange rate received
     select {
@@ -52,8 +52,9 @@ func (s *ExchangeRateService) fetchExchangeRate(service, currencyPair string, re
         errorChannel <- fmt.Errorf("API key not found for service: %s", service)
         return
     }
-
-    url := fmt.Sprintf("https://%s/latest?base=%s&symbols=%s", service, currencyPair[:3], currencyPair[4:])
+    
+    //url := fmt.Sprintf("https://%s/latest?base=%s&symbols=%s", service, currencyPair[:3], currencyPair[4:])
+    url := fmt.Sprintf("https://openexchangerates.org/latest?base=%s&symbols=%s", currencyPair[:3], currencyPair[4:])
     req, err := http.NewRequest("GET", url, nil)
     if err != nil {
         errorChannel <- err
