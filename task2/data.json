@@ -1,0 +1,14 @@
+{
+    "data": [
+        { "id": "1", "personName": "John Doe", "salary": { "value": 1000, "currency": "USD" } },
+        { "id": "2", "personName": "Jane Smith", "salary": { "value": 800, "currency": "EUR" } },
+        { "id": "3", "personName": "Alice Johnson", "salary": { "value": 1200, "currency": "GBP" } },
+        { "id": "4", "personName": "Bob Williams", "salary": { "value": 1500, "currency": "USD" } },
+        { "id": "5", "personName": "Charlie Brown", "salary": { "value": 900, "currency": "EUR" } },
+        { "id": "6", "personName": "David Lee", "salary": { "value": 1100, "currency": "GBP" } },
+        { "id": "7", "personName": "Emily Davis", "salary": { "value": 1300, "currency": "USD" } },
+        { "id": "8", "personName": "Fiona Miller", "salary": { "value": 850, "currency": "EUR" } },
+        { "id": "9", "personName": "George Wilson", "salary": { "value": 1250, "currency": "GBP" } },
+        { "id": "10", "personName": "Hannah Taylor", "salary": { "value": 950, "currency": "USD" } }
+    ]
+}
