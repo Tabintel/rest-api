@@ -4,90 +4,109 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"sort"
 )
 
-// Person represents a single person record
-type Person struct {
-	ID     string  `json:"id"`
-	Name   string  `json:"personName"`
-	Salary Salary  `json:"salary"`
-}
-
-// Salary represents the salary of a person
+// Salary struct represents the salary of a person
 type Salary struct {
-	Value    float64 `json:"value"`
-	Currency string  `json:"currency"`
+	Value    interface{} `json:"value"`
+	Currency string      `json:"currency"`
 }
 
-// Persons represents a collection of Person records
+// Person struct represents a person's information
+type Person struct {
+	ID         string `json:"id"`
+	PersonName string `json:"personName"`
+	Salary     Salary `json:"salary"`
+}
+
+// Persons struct represents an array of Person objects
 type Persons struct {
 	Data []Person `json:"data"`
 }
 
 func main() {
-	// Read data from JSON file
+	// Read JSON data from file
 	data, err := ioutil.ReadFile("data.json")
 	if err != nil {
-		log.Fatalf("failed to read JSON file: %v", err)
+		fmt.Println("Error reading file:", err)
+		return
 	}
 
 	// Unmarshal JSON data into Persons struct
 	var persons Persons
-	if err := json.Unmarshal(data, &persons); err != nil {
-		log.Fatalf("failed to unmarshal JSON data: %v", err)
+	err = json.Unmarshal(data, &persons)
+	if err != nil {
+		fmt.Println("Error decoding JSON:", err)
+		return
 	}
 
 	// Print original data
 	fmt.Println("Original Data:")
-	for _, person := range persons.Data {
-		fmt.Printf("ID: %s, Name: %s, Salary: %.2f %s\n", person.ID, person.Name, person.Salary.Value, person.Salary.Currency)
-	}
+	printPersons(persons.Data)
 
-	// Sort data by salary in ascending order
-	sort.Slice(persons.Data, func(i, j int) bool {
-		return persons.Data[i].Salary.Value < persons.Data[j].Salary.Value
+	// Sort data by salary (ascending)
+	sort.SliceStable(persons.Data, func(i, j int) bool {
+		return convertSalary(persons.Data[i].Salary) < convertSalary(persons.Data[j].Salary)
 	})
-
-	// Print sorted data (ascending order)
 	fmt.Println("\nSorted Data by Salary (Ascending):")
-	for _, person := range persons.Data {
-		fmt.Printf("ID: %s, Name: %s, Salary: %.2f %s\n", person.ID, person.Name, person.Salary.Value, person.Salary.Currency)
-	}
+	printPersons(persons.Data)
 
-	// Sort data by salary in descending order
-	sort.Slice(persons.Data, func(i, j int) bool {
-		return persons.Data[i].Salary.Value > persons.Data[j].Salary.Value
+	// Sort data by salary (descending)
+	sort.SliceStable(persons.Data, func(i, j int) bool {
+		return convertSalary(persons.Data[i].Salary) > convertSalary(persons.Data[j].Salary)
 	})
-
-	// Print sorted data (descending order)
 	fmt.Println("\nSorted Data by Salary (Descending):")
-	for _, person := range persons.Data {
-		fmt.Printf("ID: %s, Name: %s, Salary: %.2f %s\n", person.ID, person.Name, person.Salary.Value, person.Salary.Currency)
-	}
+	printPersons(persons.Data)
 
-	// Group data by currency
-	currencyMap := make(map[string][]Person)
-	for _, person := range persons.Data {
-		currencyMap[person.Salary.Currency] = append(currencyMap[person.Salary.Currency], person)
-	}
-
-	// Print grouped data
+	// Group persons by salary currency
 	fmt.Println("\nGrouped Data by Currency:")
-	for currency, people := range currencyMap {
-		fmt.Printf("%s:\n", currency)
-		for _, person := range people {
-			fmt.Printf("ID: %s, Name: %s, Salary: %.2f %s\n", person.ID, person.Name, person.Salary.Value, person.Salary.Currency)
-		}
-	}
+	groupedData := groupByCurrency(persons.Data)
+	printGroupedData(groupedData)
 
-	// Filter data by currency (USD) and convert to USD
-	usdCurrency := "USD"
-	fmt.Printf("\nFiltered Data by Currency (%s) and Converted to USD:\n", usdCurrency)
-	for _, person := range persons.Data {
-		if person.Salary.Currency == usdCurrency {
-			fmt.Printf("ID: %s, Name: %s, Salary: %.2f USD\n", person.ID, person.Name, person.Salary.Value)
-		}
+	// Filter persons by salary criteria in USD
+	fmt.Println("\nFiltered Data by Currency (USD):")
+	filteredData := filterByCurrency(groupedData, "USD")
+	printPersons(filteredData)
+}
+
+// printPersons prints the details of persons
+func printPersons(persons []Person) {
+	for _, p := range persons {
+		fmt.Printf("ID: %s, Name: %s, Salary: %v %s\n", p.ID, p.PersonName, p.Salary.Value, p.Salary.Currency)
+	}
+}
+
+// convertSalary converts salary value to float64
+func convertSalary(s Salary) float64 {
+	var value float64
+	switch v := s.Value.(type) {
+	case float64:
+		value = v
+	case string:
+		fmt.Sscanf(v, "%f", &value)
+	}
+	return value
+}
+
+// groupByCurrency groups persons by salary currency into hash maps
+func groupByCurrency(persons []Person) map[string][]Person {
+	groupedData := make(map[string][]Person)
+	for _, p := range persons {
+		groupedData[p.Salary.Currency] = append(groupedData[p.Salary.Currency], p)
+	}
+	return groupedData
+}
+
+// filterByCurrency filters persons by salary criteria in the specified currency
+func filterByCurrency(groupedData map[string][]Person, currency string) []Person {
+	return groupedData[currency]
+}
+
+// printGroupedData prints the grouped data
+func printGroupedData(groupedData map[string][]Person) {
+	for currency, persons := range groupedData {
+		fmt.Println(currency + ":")
+		printPersons(persons)
 	}
 }
