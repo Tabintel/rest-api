@@ -1,26 +1,41 @@
 package main
 
 import (
-	"log"
-	"net/http"
+    "log"
+    "net/http"
 
-	"github.com/go-chi/chi"
-	"github.com/tabintel/rest-api/rate-api/internal/config"
-	"github.com/tabintel/rest-api/rate-api/internal/rateservice"
+    "github.com/go-chi/chi"
+    "github.com/joho/godotenv"
+    "github.com/tabintel/rest-api/rate-api/internal/config"
+    "github.com/tabintel/rest-api/rate-api/internal/rateservice"
 )
 
 func main() {
+    // Load environment variables from .env file
+    err := godotenv.Load()
+    if err != nil {
+        log.Fatal("Error loading .env file")
+    }
 
-	cfg, err := config.LoadConfig()
-	if err != nil {
-		// log error with fatal
-	}
+    // Load configuration
+    cfg, err := config.LoadConfig()
+    if err != nil {
+        log.Fatalf("Error loading config: %v", err)
+    }
 
-	rateService := rateservice.NewRate(cfg)
-	rateHttpHandler := rateservice.NewHTTPHandler(rateService)
+    // Create Rate service instance
+    rateService, err := rateservice.NewRate(cfg)
+    if err != nil {
+        log.Fatalf("Error creating rate service: %v", err)
+    }
 
-	router := chi.NewRouter()
-	router.Mount("/v1/rate", rateHttpHandler)
+    // Create Rate HTTP handler
+    rateHttpHandler := rateservice.NewHTTPHandler(rateService)
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+    // Set up Chi router
+    router := chi.NewRouter()
+    router.Mount("/v1/rate", rateHttpHandler)
+
+    // Start HTTP server
+    log.Fatal(http.ListenAndServe(":8080", router))
 }

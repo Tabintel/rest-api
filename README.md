@@ -26,19 +26,9 @@ Logging is also implemented in the solution to provide informative messages abou
 
 [Thunder Client  VS Code Extension](https://www.thunderclient.com/) is used to make the `POST` request to the API with this url `http://localhost:8080/exchange-rate`
 
-#### Code Structure:
-- **`main.go`:**
-  - Contains the main entry point of the program.
-  - Implements concurrent fetching of exchange rates and returns the first successful response.
-
 #### Usage:
 - Run `go run main.go` to execute the program.
 - Ensure that the required environment variables (`CURRENCYAPI_API_KEY` and `EXCHANGERATESAPI_IO_KEY`) are set with the appropriate API keys.
-
-#### Code Structure:
-- **`main.go`:**
-  - Implements the main logic for reading the JSON data, creating `Person` objects, and performing data operations.
-  - Contains functions for sorting, grouping, and filtering `Person` objects.
 
 #### Example Usage
 ```go

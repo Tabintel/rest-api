@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi"
 )
 
-type RateService interface{
+type RateService interface {
 	RateService(ctx context.Context, currencyPair string) (*RateResponse, error)
 }
 
@@ -23,7 +23,6 @@ func NewHTTPHandler(rateService RateService) http.Handler {
 	return router
 }
 
-
 type httpHandler struct {
 	rateService RateService
 }
@@ -31,13 +30,20 @@ type httpHandler struct {
 func (h *httpHandler) GetRate(w http.ResponseWriter, r *http.Request) {
 	data := &RateRequest{}
 	if err := json.NewDecoder(r.Body).Decode(data); err != nil {
-		return 
-	}
-
-	rate , err := h.rateService.RateService(r.Context(), data.CurrencyPair)
-	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// return rate
+	rate, err := h.rateService.RateService(r.Context(), data.CurrencyPair)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Encode the rate response to JSON and write it to the response writer
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(rate); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

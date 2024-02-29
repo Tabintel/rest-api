@@ -1,13 +1,17 @@
 package config
 
-import "github.com/kelseyhightower/envconfig"
+import (
+    "errors"
+
+    "github.com/kelseyhightower/envconfig"
+)
 
 type Config struct {
-    Environment         string `default:"local" envconfig:"ENVIRONMENT"`
-    CurrencyAPIBaseURI  string `default:"https://api.currencyapi.com" envconfig:"CURRENCY_API_BASE_URI"`
-    ExchangeAPIBaseURI  string `default:"https://api.exchangeratesapi.io" envconfig:"EXCHANGE_API_BASE_URI"`
-    CurrencyAPIKey      string `envconfig:"CURRENCY_API_KEY"`
-    ExchangeAPIKey      string `envconfig:"EXCHANGE_API_KEY"`
+    Environment        string `default:"local" envconfig:"ENVIRONMENT"`
+    CurrencyAPIBaseURI string `default:"https://api.currencyapi.com/v3/latest" envconfig:"CURRENCYAPI_API_KEY"`
+    ExchangeAPIBaseURI string `default:"https://api.exchangeratesapi.io/v1/latest" envconfig:"EXCHANGERATESAPI_IO_KEY"`
+    CurrencyAPIKey     string `envconfig:"CURRENCYAPI_API_KEY"`
+    ExchangeAPIKey     string `envconfig:"EXCHANGERATESAPI_IO_KEY"`
 }
 
 func LoadConfig() (*Config, error) {
@@ -23,4 +27,3 @@ func LoadConfig() (*Config, error) {
 
     return cfg, nil
 }
-
